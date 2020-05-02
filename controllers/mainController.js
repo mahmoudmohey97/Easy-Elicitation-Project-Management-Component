@@ -1,8 +1,7 @@
 const model = require('../models/model');
 
 
-module.exports = function (app) {
-    app.get('/', function (req, res) {		
-        res.render('home');
-    });
+module.exports.home = function (req, res) {	
+    // console.log('called');
+    res.render('home');
 };
