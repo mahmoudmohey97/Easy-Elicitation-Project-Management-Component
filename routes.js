@@ -6,7 +6,8 @@ var projectController = require('./controllers/projectController');
 var businessAnalystController = require('./controllers/businessAnalystController');
 var clientController = require('./controllers/clientController');
 
-//router.get('/', projectController.home);
+router.get('/clientProject', projectController.clientProjectHome);
+router.get('/baProject', projectController.baProjectHome);
 router.get('/ba', businessAnalystController.home);
 router.get('/client', clientController.home);
 

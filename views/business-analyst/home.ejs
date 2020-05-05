@@ -1,0 +1,15 @@
+<%- include('../layouts/header'); -%>
+
+    <%
+    for(var i = 0; i <  data.length; ++i){
+    %>
+        <div>
+            <%= data[i].approval === 0 ? 'Pending ' : 'Approved '%>
+            <a href="/baProject?pid=<%= data[i].projectId %>"> <%= data[i].name %> </a>
+        </div>
+    <%
+    }
+    %>
+
+    
+<%- include('../layouts/footer'); -%>
