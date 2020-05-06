@@ -2,10 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 
-var mainController = require('./controllers/mainController');
-router.get('/',mainController.home);
+var projectController = require('./controllers/projectController');
+var businessAnalystController = require('./controllers/businessAnalystController');
+var clientController = require('./controllers/clientController');
 
-
-
+router.get('/clientProject', projectController.clientProjectHome);
+router.get('/baProject', projectController.baProjectHome);
+router.get('/ba', businessAnalystController.home);
+router.get('/client', clientController.home);
 
 module.exports = router;
