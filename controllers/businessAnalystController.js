@@ -1,13 +1,17 @@
 var projecModel = require("../models/project");
 
 module.exports.home = function (req, res) {
-	req.session.baid = 2;
+	req.session.baid = 3;
 	if (!req.session.baid) {
 		res.render('errors/404');
 	}
 	else {
-		projecModel.getBusinessAnalystProjects(req, function (results) {
-			res.render('business-analyst/home', { data: results });
+		projecModel.getProjectsCreatedByBA(req, function (result1) {
+			
+			projecModel.getBusinessAnalystParticipatingProjects(req, function(result2){
+
+				res.render('business-analyst/home', {myProjects: result1, projects: result2 });
+			})
 		});
 	}
 }
