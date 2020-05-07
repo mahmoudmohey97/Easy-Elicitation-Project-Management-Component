@@ -1,5 +1,5 @@
 const model = require('../models/project');
-
+const sendMailModel = require('../sendmail')
 
 module.exports.clientProjectHome = function (req, res) {
 
@@ -15,6 +15,7 @@ module.exports.clientProjectHome = function (req, res) {
     }
 
 };
+
 module.exports.baProjectHome = function (req, res) {
     console.log(`id = ${req.session.baid}`);
     if (!req.session.baid) {
@@ -26,3 +27,7 @@ module.exports.baProjectHome = function (req, res) {
         })   
     }
 };
+
+module.exports.inviteClient = function(req, res){
+    sendMailModel.invite(req.query.mail, req.query.name, "<a> doos me </a>");
+}

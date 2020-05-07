@@ -3,8 +3,23 @@ const con = require('../database');
 /*******************************
 * 	get all projects business analyst participating in to display
 *******************************/
-module.exports.getBusinessAnalystProjects = function (req, callback) {
-	let sql = "SELECT * FROM businessanalystparticipant as ba, project WHERE businessAnalystId = ? and project.projectId = ba.projectId";
+module.exports.getBusinessAnalystParticipatingProjects = function (req, callback) {
+	let sql = "SELECT * FROM businessanalystparticipant as ba, project WHERE ba.businessAnalystId = ? and project.projectId = ba.projectId";
+	let inserts = [req.session.baid];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error, results) {
+		if (error) throw error;
+		// console.log(results);
+		callback(results);
+	});
+
+};
+
+/*******************************
+* 	get all projects that created by this business analyst
+*******************************/
+module.exports.getProjectsCreatedByBA = function (req, callback) {
+	let sql = "SELECT * FROM project WHERE businessAnalystId = ?";
 	let inserts = [req.session.baid];
 	sql = con.format(sql, inserts);
 	con.query(sql, function (error, results) {
@@ -59,6 +74,27 @@ module.exports.getProjectBa = function (id, callback) {
 	});
 };
 
+/*******************************
+* 	create project
+*******************************/
+module.exports.createProject = function(baId, name){
+	let sql = "insert into project (name, approval, businessAnalystId) values (?, 0, ?)"
+	let inserts = [name, baId]
+	sql = con.format(sql, inserts)
+	con.query(sql, function(error, results){
+		if (error) throw error;
+		console.log(results);
+	});
+	
+};
+
+
+/*//emails
+module.exports.addBusinessAnalystToProject = function(businessAnalystCollaboratorsList, callback){
+
+};*/
+
+//another for adding to db
 
 
 // DATABASE -> add BAid as a column in project table

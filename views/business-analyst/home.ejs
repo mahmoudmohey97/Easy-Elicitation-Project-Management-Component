@@ -1,15 +1,83 @@
 <%- include('../layouts/header'); -%>
 
+    <h1> Your projects </h1>
     <%
-    for(var i = 0; i <  data.length; ++i){
+        if(myProjects.length == 0){
+    %>
+            <div> No created Projects</div>
+    <%
+    }
+    for(var i = 0; i <  myProjects.length; ++i){
     %>
         <div>
-            <%= data[i].approval === 0 ? 'Pending ' : 'Approved '%>
-            <a href="/baProject?pid=<%= data[i].projectId %>"> <%= data[i].name %> </a>
+            <%= myProjects[i].approval === 0 ? 'Pending ' : 'Approved '%>
+            <a href="/baProject?pid=<%= myProjects[i].projectId %>"> <%= myProjects[i].name %> </a>
         </div>
     <%
     }
     %>
 
+    <div>
+        <button class="open-button" onclick="openForm()">Create new Project</button>
+    </div>
+    <div class="form-popup" id="myForm" style="display: none;">
+        <form action="" class="form-container">
+
+            <label for="email"><b> Name</b></label>
+            <input type="text" id="projectName" placeholder="Project Name" name="name" required>
+            <br>
+            <label for="email"><b> invite Client</b></label>
+            <input type="text" id="clientMail"  placeholder="Client Mail" name="clientMail" required>
+            <button type="button"  onclick="invite()">Invite</button>
+            <br>
+            
+            
+            <button type="submit" >Create</button>
+            <button type="button" onclick="closeForm()">Close</button>
+        </form>
+    </div>
+
+    <h1> Projects that you are  participated in</h1>
+    
+    
+    <%
+    for(var i = 0; i <  projects.length; ++i){
+    %>
+        <div>
+            <%= projects[i].approval === 0 ? 'Pending ' : 'Approved '%>
+            <a href="/baProject?pid=<%= projects[i].projectId %>"> <%= projects[i].name %> </a>
+        </div>
+    <%
+    }
+    %>
+    
+
+
+<script>
+    function openForm() {
+        document.getElementById("myForm").style.display = "block";
+    }
+    
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+    function invite() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // document.getElementById("demo").innerHTML = this.responseText;
+            }
+        };
+        var name =  document.getElementById("projectName").value;
+        var mail =  document.getElementById("clientMail").value;
+
+        xhttp.open("GET", "/sendEmail?name=" + name + "&" + "mail=" + mail, true);
+        xhttp.send();
+        document.getElementById("clientMail").value = "";
+
+      
+    }
+</script>
+        
     
 <%- include('../layouts/footer'); -%>
