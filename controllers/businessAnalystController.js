@@ -1,7 +1,7 @@
 var projecModel = require("../models/project");
 
 module.exports.home = function (req, res) {
-	req.session.baid = 3;
+	req.session.baid = 1;
 	if (!req.session.baid) {
 		res.render('errors/404');
 	}
