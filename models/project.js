@@ -85,10 +85,37 @@ module.exports.createProject = function(baId, name){
 		if (error) throw error;
 		console.log(results);
 	});
-	
+
 };
 
 
+/*******************************
+* 	get project BY BAId AND PROJECT NAME
+*******************************/
+module.exports.getProjectByBaAndName = function(baId, name, callback){
+	let sql = "SELECT * FROM project WHERE businessAnalystId = ? AND name = ? "
+	let inserts = [baId, name]
+	sql = con.format(sql, inserts)
+	con.query(sql, function(error, results){
+		if (error) throw error;
+		callback(results);
+	});
+
+};
+
+module.exports.clientInvitation = function(clientId, projectId, callback){
+	let sql = "INSERT INTO clientparticipant (clientId, projectId) values (?, ?)";
+	let inserts = [clientId, projectId];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error, results) {
+		if (error) throw error;
+		console.log(results);
+		console.log('successful')
+		callback(results);
+	});
+
+	
+};
 /*//emails
 module.exports.addBusinessAnalystToProject = function(businessAnalystCollaboratorsList, callback){
 
@@ -97,6 +124,4 @@ module.exports.addBusinessAnalystToProject = function(businessAnalystCollaborato
 //another for adding to db
 
 
-// DATABASE -> add BAid as a column in project table
-// Home    -> create new Project
 // project -> [participants -> (add, remove), delete project , rename project, open]
