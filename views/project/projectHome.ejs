@@ -1,0 +1,116 @@
+<%- include('../layouts/header'); -%>
+    <h1>Project's diagrams</h1>
+    <div> 
+        <button class="open-button" onclick="openForm()"> Add diagram</button>
+    </div>
+    <div class="form-popup" id="myForm" style="display: none;">
+        <form action="" class="form-container" id="diagram">
+
+            <label><b> Diagram Name</b></label>
+            <input type="text" id="diagramName" placeholder="Diagram Name" required>
+            <br>
+            <label><b> Description</b></label>
+            <input type="text" id="diagramDescription"  placeholder="Diagram Description" required>
+            <br>            
+            <button type="submit" onclick="create()">Create Diagram</button>
+            <button type="button" onclick="closeForm()">Close</button>
+        </form>
+    </div>
+
+    <% 
+        if(diagrams.length == 0){
+    %>
+            <div> No Created diagrams yet </div>
+    <%    
+        }
+        else{
+            for(var i = 0 ; i < diagrams.length ; i++){
+    %>
+                <div>
+                    <%= diagrams[i].name %>
+                    <%= diagrams[i].description %>
+                </div>
+    <%      
+            }
+        }
+    %>
+
+<h2>Participants</h2>
+<div>
+    <h3>Business Analysts in Project</h3>
+    <%           
+        for(var i = 0 ; i < businessAnalysts.length ; i++){
+    %>
+            <div>
+                <%= businessAnalysts[i].name %>
+            </div>
+    <%
+        }
+    %> 
+</div>
+
+<div>
+    <h4>Clients in Project</h4>
+    <% 
+        if(clients.length == 0){
+    %>
+            <div> No Clients yet </div>
+    <%    
+        }
+
+        for(var i = 0 ; i < clients.length ; i++){
+    %>
+            <div>
+                <%= clients[i].name %>
+            </div>
+    <%
+        }
+    %> 
+</div>
+
+<script>
+function openForm() {
+    document.getElementById("myForm").style.display = "block";
+}
+
+function closeForm() {
+    document.getElementById("myForm").style.display = "none";
+}
+
+function create() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            // document.getElementById("demo").innerHTML = this.responseText;
+        }
+    };
+    var name = document.getElementById("diagramName").value;
+    var description = document.getElementById("diagramDescription").value;
+    //console.log(name);
+    //console.log(description);
+
+    // pre-fill FormData from the form
+    /*let formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description)
+    //console.log(formData.getAll('diagramName'));
+    for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]); 
+    }*/
+    let url = window.location.href;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    xhttp.open("POST", "/createDiagram", true);
+    xhttp.setRequestHeader('pid', pid)
+    xhttp.setRequestHeader("name", name);
+    xhttp.setRequestHeader('description', description);
+    xhttp.send();
+/*xhttp.addEventListener("load", function (event) {
+    console.log(this);
+    console.log(this)
+});   
+// xhttp.onload = () => alert(xhttp.response);*/
+}
+</script>
+
+<%- include('../layouts/footer'); -%>

@@ -8,9 +8,7 @@ module.exports.home = function (req, res) {
 	}
 	else {
 		projecModel.getProjectsCreatedByBA(req, function (result1) {
-
 			projecModel.getBusinessAnalystParticipatingProjects(req, function (result2) {
-
 				res.render('business-analyst/home', { myProjects: result1, projects: result2 });
 			})
 		});
@@ -22,11 +20,7 @@ module.exports.getBAsInMyCompany = function (req, res) {
 		res.render('errors/404');
 	}
 	else {
-
-
 		businessAnalystModel.getBaById(req.session.baid, function (result) {
-
-
 			businessAnalystModel.getBusinessAnalystsByCompanyName(result.companyName, function (bas) {
 				var emails = "";
 				for (var i = 0; i < bas.length; ++i) {
@@ -38,7 +32,6 @@ module.exports.getBAsInMyCompany = function (req, res) {
 				}
 				res.send(emails);
 			})
-
 		});
 	}
 

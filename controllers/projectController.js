@@ -5,28 +5,32 @@ const clientModel = require('../models/client')
 
 module.exports.clientProjectHome = function (req, res) {
 
-    console.log(`id = ${req.session.cid}`);
+    //console.log(`client id = ${req.session.cid}`);
     if (!req.session.cid) {
         res.render('erros/404')
     }
     else {
         model.getProjectClients(req.query.pid, function (results) {
-
             res.render('project/clientHome');
         });
     }
 
 };
-
+// momken neshel el foo2 de w n5aleha project home bs since en el code kolo hyb2a hwa hwa except en el customer my2darsh y3ml add l diagram
 module.exports.baProjectHome = function (req, res) {
-    console.log(`id = ${req.session.baid}`);
+    //console.log(`id = ${req.session.baid}`);
     if (!req.session.baid) {
         res.render('erros/404')
     }
     else {
-        model.getProjectBa(req.query.pid, function (results) {
-            res.render('project/baHome');
-        })
+        model.getProjectBa(req.query.pid, function(baParticipants) {
+            model.getProjectClients(req.query.pid, function(clientsParticipants){
+                model.showProjectDiagrams(req, function(projectDiagrams){
+                    res.render('project/projectHome', {diagrams : projectDiagrams , businessAnalysts : baParticipants, clients : clientsParticipants });
+                    //console.log(12);
+                });
+            });
+        });
     }
 };
 
@@ -78,13 +82,13 @@ module.exports.handleClientInvitationLink = function (req, res) {
     }
 }
 
+module.exports.createDiagram = function(req, res){
+    var name = req.get('name');
+    var description = req.get('description');
+    var projectId = req.get('pid');
+    model.addDiagram(name, description, projectId);
+}
 /*
-    - retrive kol el BAs el fl company
-    - ali  saif hadeer -> list 
-
-    - get all Com Db
-    - filter elly m3ah fel projt already
-    - list ( email ADD - REMOVE)
     - Invite
 
 */
