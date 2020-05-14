@@ -1,0 +1,54 @@
+<%- include('../layouts/header'); -%>
+    <h1>Project's diagrams</h1>
+    <% 
+        if(diagrams.length == 0){
+    %>
+            <div> No Created diagrams yet </div>
+    <%    
+        }
+        else{
+            for(var i = 0 ; i < diagrams.length ; i++){
+    %>
+                <div>
+                    <%= diagrams[i].name %>
+                    <%= diagrams[i].description %>
+                </div>
+    <%      
+            }
+        }
+    %>
+
+<h2>Participants</h2>
+<div>
+    <h3>Business Analysts in Project</h3>
+    <%           
+        for(var i = 0 ; i < businessAnalysts.length ; i++){
+    %>
+            <div>
+                <%= businessAnalysts[i].name %>
+            </div>
+    <%
+        }
+    %> 
+</div>
+
+<div>
+    <h4>Clients in Project</h4>
+    <% 
+        if(clients.length == 0){
+    %>
+            <div> No Clients yet </div>
+    <%    
+        }
+
+        for(var i = 0 ; i < clients.length ; i++){
+    %>
+            <div>
+                <%= clients[i].name %>
+            </div>
+    <%
+        }
+    %> 
+</div>
+
+<%- include('../layouts/footer'); -%>

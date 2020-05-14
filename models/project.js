@@ -54,7 +54,7 @@ module.exports.getProjectClients = function (id, callback) {
 	sql = con.format(sql, inserts);
 	con.query(sql, function (error, results) {
 		if (error) throw error;
-		console.log(results);
+		//console.log(results);
 		callback(results);
 	});
 	
@@ -69,7 +69,7 @@ module.exports.getProjectBa = function (id, callback) {
 	sql = con.format(sql, inserts);
 	con.query(sql, function (error, results) {
 		if (error) throw error;
-		console.log(results);
+		//console.log(results);
 		callback(results);
 	});
 };
@@ -113,15 +113,16 @@ module.exports.clientInvitation = function(clientId, projectId, callback){
 		console.log('successful')
 		callback(results);
 	});
-
-	
 };
-/*//emails
-module.exports.addBusinessAnalystToProject = function(businessAnalystCollaboratorsList, callback){
 
-};*/
-
-//another for adding to db
-
-
-// project -> [participants -> (add, remove), delete project , rename project, open]
+module.exports.showProjectDiagrams = function(req, callback){
+	let sql = "select * from diagram where projectId=?"
+	let inserts = [req.query.pid];
+	console.log(inserts);
+	sql = con.format(sql, inserts);
+	con.query(sql, function(error, results){
+		if (error) throw error;
+		//console.log(results);
+		callback(results);
+	})
+};

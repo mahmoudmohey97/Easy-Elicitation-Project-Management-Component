@@ -24,9 +24,14 @@ module.exports.baProjectHome = function (req, res) {
         res.render('erros/404')
     }
     else {
-        model.getProjectBa(req.query.pid, function (results) {
-            res.render('project/baHome');
-        })
+        model.getProjectBa(req.query.pid, function(baParticipants) {
+            model.getProjectClients(req.query.pid, function(clientsParticipants){
+                model.showProjectDiagrams(req, function(projectDiagrams){
+                    res.render('project/projectHome', {diagrams : projectDiagrams , businessAnalysts : baParticipants, clients : clientsParticipants });
+                    console.log(12);
+                });
+            });
+        });
     }
 };
 
@@ -78,13 +83,8 @@ module.exports.handleClientInvitationLink = function (req, res) {
     }
 }
 
-/*
-    - retrive kol el BAs el fl company
-    - ali  saif hadeer -> list 
 
-    - get all Com Db
-    - filter elly m3ah fel projt already
-    - list ( email ADD - REMOVE)
+/*
     - Invite
 
 */
