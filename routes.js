@@ -10,6 +10,7 @@ var clientController = require('./controllers/clientController');
 router.get('/clientProject', projectController.clientProjectHome);
 router.get('/baProject', projectController.baProjectHome);
 //router.get('/baHome', projectController.getProjectDiagrams);
+router.post('/createDiagram', projectController.createDiagram);
 router.get('/ba', businessAnalystController.home);
 router.get('/client', clientController.home);
 router.get('/sendEmail', projectController.inviteClient);

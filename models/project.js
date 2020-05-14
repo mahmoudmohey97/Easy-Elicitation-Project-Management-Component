@@ -88,7 +88,6 @@ module.exports.createProject = function(baId, name){
 
 };
 
-
 /*******************************
 * 	get project BY BAId AND PROJECT NAME
 *******************************/
@@ -109,7 +108,7 @@ module.exports.clientInvitation = function(clientId, projectId, callback){
 	sql = con.format(sql, inserts);
 	con.query(sql, function (error, results) {
 		if (error) throw error;
-		console.log(results);
+		//console.log(results);
 		console.log('successful')
 		callback(results);
 	});
@@ -118,7 +117,7 @@ module.exports.clientInvitation = function(clientId, projectId, callback){
 module.exports.showProjectDiagrams = function(req, callback){
 	let sql = "select * from diagram where projectId=?"
 	let inserts = [req.query.pid];
-	console.log(inserts);
+	//console.log(inserts);
 	sql = con.format(sql, inserts);
 	con.query(sql, function(error, results){
 		if (error) throw error;
@@ -126,3 +125,14 @@ module.exports.showProjectDiagrams = function(req, callback){
 		callback(results);
 	})
 };
+
+module.exports.addDiagram = function(name, description, projectId){
+	let sql = "insert into diagram(approval, serializedDiagram, name, description, projectId) values(0, '', ?, ?, ?)"
+	let inserts = [name, description, projectId];
+	sql = con.format(sql, inserts);
+	con.query(sql, function(error){
+		if(error) throw error;
+		console.log('added successfully')
+	});
+};
+
