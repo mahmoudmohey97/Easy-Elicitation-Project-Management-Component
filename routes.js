@@ -14,5 +14,6 @@ router.get('/ba', businessAnalystController.home);
 router.get('/client', clientController.home);
 router.get('/sendEmail', projectController.inviteClient);
 router.get('/clientInvitation', projectController.handleClientInvitationLink)
+router.get('/getBasInCompany', businessAnalystController.getBAsInMyCompany)
 //router.get('/baInvitation', projectController.handlebaInvitationLink)
 module.exports = router;

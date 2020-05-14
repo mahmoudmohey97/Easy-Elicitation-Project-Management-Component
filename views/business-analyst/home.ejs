@@ -30,6 +30,11 @@
             <input type="text" id="clientMail"  placeholder="Client Mail" name="clientMail" required>
             <button type="button"  onclick="invite()">Invite</button>
             <br>
+
+            <button type="button"  onclick="getBas()">Invite BA</button>
+           
+           <!-- LIST -->
+            <div id="ba-list"> </div>
             
             <button type="submit" >Create</button>
             <button type="button" onclick="closeForm()">Close</button>
@@ -50,33 +55,5 @@
     }
     %>
     
-
-
-<script>
-    function openForm() {
-        document.getElementById("myForm").style.display = "block";
-    }
-    
-    function closeForm() {
-        document.getElementById("myForm").style.display = "none";
-    }
-    function invite() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                // document.getElementById("demo").innerHTML = this.responseText;
-            }
-        };
-        var name =  document.getElementById("projectName").value;
-        var mail =  document.getElementById("clientMail").value;
-
-        xhttp.open("GET", "/sendEmail?name=" + name + "&" + "mail=" + mail, true);
-        xhttp.send();
-        document.getElementById("clientMail").value = "";
-
-      
-    }
-</script>
-        
-    
+    <script src="/assets/js/baHomeScript.js"></script>
 <%- include('../layouts/footer'); -%>
