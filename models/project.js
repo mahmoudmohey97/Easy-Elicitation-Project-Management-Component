@@ -83,7 +83,7 @@ module.exports.createProject = function(baId, name){
 	sql = con.format(sql, inserts)
 	con.query(sql, function(error, results){
 		if (error) throw error;
-		console.log(results);
+		// console.log(results);
 	});
 
 };
@@ -114,6 +114,19 @@ module.exports.clientInvitation = function(clientId, projectId, callback){
 	});
 };
 
+
+module.exports.businessAnalystInvitation = function(businessAnalystId, projectId, callback){
+	let sql = "INSERT INTO businessanalystparticipant (businessanalystId, projectId) values (?, ?)";
+	let inserts = [businessAnalystId, projectId];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error, results) {
+		if (error) throw error;
+		//console.log(results);
+		console.log('Added successfully')
+		callback(results);
+	});
+};
+
 module.exports.showProjectDiagrams = function(req, callback){
 	let sql = "select * from diagram where projectId=?"
 	let inserts = [req.query.pid];
@@ -126,6 +139,18 @@ module.exports.showProjectDiagrams = function(req, callback){
 	})
 };
 
+
+module.exports.getProjectOwner = function(id, callback){
+	let sql = "select * from project as p, businessanalyst as ba where p.projectId = ? AND p.businessanalystId = ba.businessanalystId"
+	let inserts = [id];
+	//console.log(inserts);
+	sql = con.format(sql, inserts);
+	con.query(sql, function(error, results){
+		if (error) throw error;
+		//console.log(results);
+		callback(results[0]);
+	})
+};
 module.exports.addDiagram = function(name, description, projectId){
 	let sql = "insert into diagram(approval, serializedDiagram, name, description, projectId) values(0, '', ?, ?, ?)"
 	let inserts = [name, description, projectId];

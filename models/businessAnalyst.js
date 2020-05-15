@@ -1,6 +1,7 @@
 const con = require('../database');
 
 module.exports.getBusinessAnalystsByCompanyName = function (companyName, callback) {
+	// mesh fel project
 	let sql = "SELECT * FROM businessanalyst WHERE companyName = ?";
 	let inserts = [companyName];
 	sql = con.format(sql, inserts);

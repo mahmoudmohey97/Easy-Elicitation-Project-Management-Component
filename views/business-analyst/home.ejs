@@ -11,7 +11,7 @@
     %>
         <div>
             <%= myProjects[i].approval === 0 ? 'Pending ' : 'Approved '%>
-            <a href="/baProject?pid=<%= myProjects[i].projectId %>"> <%= myProjects[i].name %> </a>
+            <a href="/project?pid=<%= myProjects[i].projectId %>"> <%= myProjects[i].name %> </a>
         </div>
     <%
     }
@@ -21,13 +21,13 @@
         <button class="open-button" onclick="openForm()">Create new Project</button>
     </div>
     <div class="form-popup" id="myForm" style="display: none;">
-        <form action="" class="form-container">
+        <form action="/createProject" method="post" class="form-container">
 
             <label for="email"><b> Name</b></label>
             <input type="text" id="projectName" placeholder="Project Name" name="name" required>
             <br>
             <label for="email"><b> invite Client</b></label>
-            <input type="text" id="clientMail"  placeholder="Client Mail" name="clientMail" required>
+            <input type="text" id="clientMail"  placeholder="Client Mail" name="clientMail">
             <button type="button"  onclick="invite()">Invite</button>
             <br>
 
@@ -41,7 +41,7 @@
         </form>
     </div>
 
-    <h1> Projects that you are  participated in</h1>
+    <h1> Projects that you are  participating in</h1>
     
     
     <%
@@ -49,7 +49,7 @@
     %>
         <div>
             <%= projects[i].approval === 0 ? 'Pending ' : 'Approved '%>
-            <a href="/baProject?pid=<%= projects[i].projectId %>"> <%= projects[i].name %> </a>
+            <a href="/project?pid=<%= projects[i].projectId %>"> <%= projects[i].name %> </a>
         </div>
     <%
     }

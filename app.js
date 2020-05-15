@@ -10,7 +10,6 @@ app.use(bodyParser.json());
 
 // View Engine..  Extension
 app.set('view engine', 'ejs');
-
 // Routes Handler
 app.use('/',router); 
 
