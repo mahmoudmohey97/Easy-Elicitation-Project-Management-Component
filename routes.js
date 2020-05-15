@@ -7,14 +7,16 @@ var mailer = require('./sendmail');
 var businessAnalystController = require('./controllers/businessAnalystController');
 var clientController = require('./controllers/clientController');
 
-router.get('/clientProject', projectController.clientProjectHome);
-router.get('/baProject', projectController.baProjectHome);
+router.get('/project', projectController.projectHome);
+router.post('/createProject', projectController.createProject);
 //router.get('/baHome', projectController.getProjectDiagrams);
 router.post('/createDiagram', projectController.createDiagram);
 router.get('/ba', businessAnalystController.home);
 router.get('/client', clientController.home);
 router.get('/sendEmail', projectController.inviteClient);
+router.post('/sendEmailToBA', projectController.inviteBA);
 router.get('/clientInvitation', projectController.handleClientInvitationLink)
+router.get('/baInvitation', projectController.handleBAInvitationLink)
 router.get('/getBasInCompany', businessAnalystController.getBAsInMyCompany)
 //router.get('/baInvitation', projectController.handlebaInvitationLink)
 module.exports = router;

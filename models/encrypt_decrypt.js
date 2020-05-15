@@ -2,8 +2,7 @@ const Cryptr = require('cryptr');
 const cryptr = new Cryptr('mailKey');
 
 module.exports.encrypt = function(name, callback){
-    const encrypted = cryptr.encrypt('modymohey@gmail.com');
-    //console.log(encrypted);
+    const encrypted = cryptr.encrypt(name);
     callback(encrypted);
 };
 

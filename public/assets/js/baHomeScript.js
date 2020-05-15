@@ -1,13 +1,13 @@
-var emails = [];
+var mails = [];
 $(document).ready(function () {
     $(document).on("click", 'input[type="checkbox"]', function (e) {
         var checkedMail = $(this).parent().children()[1].innerHTML;
         if ($(this).prop("checked") == true) {
-            emails.push(checkedMail);
+            mails.push(checkedMail);
         }
         else if ($(this).prop("checked") == false) {
-            const index = emails.indexOf(checkedMail);
-            emails.splice(index, 1);
+            const index = mails.indexOf(checkedMail);
+            mails.splice(index, 1);
         }
     });
 });
@@ -67,4 +67,20 @@ function getBas() {
     };
     xhttp.open("GET", "/getBasInCompany", true);
     xhttp.send();
+}
+
+function inviteBas() {
+    var name = document.getElementById("projectName").value;
+    if(mails.length != 0 && name){
+        $.ajax({
+            type: "POST",
+            data: { data : mails,
+                'name' :name
+            },
+            url: "/sendEmailToBA",
+            success: function () {
+                console.log('Successful');
+            }
+        });
+    }        
 }

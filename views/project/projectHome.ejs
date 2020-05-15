@@ -1,10 +1,13 @@
 <%- include('../layouts/header'); -%>
     <h1>Project's diagrams</h1>
+    <%
+        if(auth){
+    %>
     <div> 
-        <button class="open-button" onclick="openForm()"> Add diagram</button>
+        <button class="open-button" onclick="openForm()"> New diagram</button>
     </div>
     <div class="form-popup" id="myForm" style="display: none;">
-        <form action="" class="form-container" id="diagram">
+        <form action="" onsubmit="return reloadFun()" class="form-container" id="diagram">
 
             <label><b> Diagram Name</b></label>
             <input type="text" id="diagramName" placeholder="Diagram Name" required>
@@ -17,7 +20,7 @@
         </form>
     </div>
 
-    <% 
+    <% }
         if(diagrams.length == 0){
     %>
             <div> No Created diagrams yet </div>
@@ -35,6 +38,11 @@
         }
     %>
 
+<h2>Created by</h2>
+<div>
+    <%= owner.name %>
+    <a href="#"> <%= owner.email %> </a>
+</div>
 <h2>Participants</h2>
 <div>
     <h3>Business Analysts in Project</h3>
@@ -69,6 +77,13 @@
 </div>
 
 <script>
+
+function reloadFun(){
+    let url = window.location.href;
+    location.reload();
+    return false;
+    
+}
 function openForm() {
     document.getElementById("myForm").style.display = "block";
 }
@@ -79,27 +94,16 @@ function closeForm() {
 
 function create() {
     var xhttp = new XMLHttpRequest();
+    let url = window.location.href;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            // document.getElementById("demo").innerHTML = this.responseText;
+
         }
     };
     var name = document.getElementById("diagramName").value;
     var description = document.getElementById("diagramDescription").value;
-    //console.log(name);
-    //console.log(description);
-
-    // pre-fill FormData from the form
-    /*let formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description)
-    //console.log(formData.getAll('diagramName'));
-    for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]); 
-    }*/
-    let url = window.location.href;
-    let params = new URLSearchParams(location.search);
-    pid = params.get('pid');
     xhttp.open("POST", "/createDiagram", true);
     xhttp.setRequestHeader('pid', pid)
     xhttp.setRequestHeader("name", name);

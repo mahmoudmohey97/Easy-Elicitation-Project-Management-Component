@@ -1,13 +1,13 @@
 <%- include('../layouts/header'); -%>
 
+    <h1> Projects that you are  participating in</h1>
     <%
-    
    
     for(var i = 0; i <  data.length; ++i){
     %>
     <div>
         <%= data[i].approval === 0 ? 'Pending ' : 'Approved '%>
-        <a href="/clientProject?pid=<%= data[i].projectId %>"> <%= data[i].name %> </a>
+        <a href="/project?pid=<%= data[i].projectId %>"> <%= data[i].name %> </a>
     </div>
     <%
     }
