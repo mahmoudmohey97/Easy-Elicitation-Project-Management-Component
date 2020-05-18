@@ -34,7 +34,6 @@ function invite() {
     xhttp.send();
     document.getElementById("clientMail").value = "";
 
-
 }
 
 function getBas() {

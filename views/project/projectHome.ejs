@@ -4,7 +4,7 @@
         if(auth){
     %>
     <div> 
-        <button class="open-button" onclick="openForm()"> New diagram</button>
+        <button class="open-button" onclick="openForm('myForm')"> New diagram</button>
     </div>
     <div class="form-popup" id="myForm" style="display: none;">
         <form action="" onsubmit="return reloadFun()" class="form-container" id="diagram">
@@ -16,7 +16,7 @@
             <input type="text" id="diagramDescription"  placeholder="Diagram Description" required>
             <br>            
             <button type="submit" onclick="create()">Create Diagram</button>
-            <button type="button" onclick="closeForm()">Close</button>
+            <button type="button" onclick="closeForm('myform')">Close</button>
         </form>
     </div>
 
@@ -32,11 +32,38 @@
                 <div>
                     <%= diagrams[i].name %>
                     <%= diagrams[i].description %>
+                    <a href="<%= diagrams[i].serializedDiagram %>"> open </a>
                 </div>
     <%      
             }
         }
     %>
+
+
+<h2> Attachments</h2>
+<div> 
+    <button class="open-button" onclick="openForm('attachmentForm')"> Add attachement</button>
+</div>
+<div class="form-popup" id="attachmentForm" style="display: none;">
+    <form method="POST" action="" onsubmit="return reloadFun()" class="form-container" id="attachment">
+        <div>File: <input type="file" name="someExpressFiles" multiple="multiple" /></div>
+        <button type="button" onclick="closeForm('attachmentForm')">Close</button>
+        <input type="submit" onclick="addAttachment()" value="Upload" />
+        </form>
+</div>
+<div>
+    <% if(attachements.length > 0){  
+            for(var i = 0 ; i < attachements.length; i++)
+            { %>
+                <div>  
+                    <a href="<%=attachements[i].link%>"> <%=attachements[i].name%> </a>               
+                </div>  
+        <%    
+            }
+        }%>
+</div>
+
+
 
 <h2>Created by</h2>
 <div>
@@ -46,6 +73,7 @@
 <h2>Participants</h2>
 <div>
     <h3>Business Analysts in Project</h3>
+    
     <%           
         for(var i = 0 ; i < businessAnalysts.length ; i++){
     %>
@@ -54,11 +82,16 @@
             </div>
     <%
         }
-    %> 
+    %>
+    <% if(auth)
+        {%>
+        <button onclick="getBasInProjectHome()" id="addBusinessanalyst">Add Business Analyst</button> 
+    <%}%>
+    <div id="ba-list"> </div>
 </div>
 
 <div>
-    <h4>Clients in Project</h4>
+    <h3>Clients in Project</h3>
     <% 
         if(clients.length == 0){
     %>
@@ -75,8 +108,32 @@
         }
     %> 
 </div>
-
+<div>
+    <button>
+        <a href="/leaveProject">Leave 3ashan z3lt</a>
+    </button>
+</div>
+<% if(auth)
+        {%>
+    <label for="email"><b> invite Client</b></label>
+    <input type="text" id="clientMail"  placeholder="Client Mail" name="clientMail">
+    <button type="button"  onclick="invite()">Invite</button>
+    <%}%>
 <script>
+
+var mails = [];
+$(document).ready(function () {
+    $(document).on("click", 'input[type="checkbox"]', function (e) {
+        var checkedMail = $(this).parent().children()[1].innerHTML;
+        if ($(this).prop("checked") == true) {
+            mails.push(checkedMail);
+        }
+        else if ($(this).prop("checked") == false) {
+            const index = mails.indexOf(checkedMail);
+            mails.splice(index, 1);
+        }
+    });
+});
 
 function reloadFun(){
     let url = window.location.href;
@@ -84,12 +141,13 @@ function reloadFun(){
     return false;
     
 }
-function openForm() {
-    document.getElementById("myForm").style.display = "block";
+
+function openForm(id) {
+    document.getElementById(id).style.display = "block";
 }
 
-function closeForm() {
-    document.getElementById("myForm").style.display = "none";
+function closeForm(id) {
+    document.getElementById(id).style.display = "none";
 }
 
 function create() {
@@ -109,12 +167,103 @@ function create() {
     xhttp.setRequestHeader("name", name);
     xhttp.setRequestHeader('description', description);
     xhttp.send();
-/*xhttp.addEventListener("load", function (event) {
-    console.log(this);
-    console.log(this)
-});   
-// xhttp.onload = () => alert(xhttp.response);*/
 }
-</script>
 
+function addAttachment() {
+    var xhttp = new XMLHttpRequest();
+    let url = window.location.href;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    
+    formData = new FormData();
+    formData.append('file', $('input[type=file]')[0].files[0]);
+    formData.append('pid', pid);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+        }
+    };
+    console.log(formData.get('file'));
+    xhttp.open("POST", "/upload", true);
+    xhttp.send(formData);
+}
+
+function getBasInProjectHome() {
+    if (document.getElementById("ba-list").childElementCount != 0) {
+        return;
+    }
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var arr = this.responseText.split(",");
+            for (var i = 0; i < arr.length; ++i) {
+                var node = document.createElement("DIV");
+                node.setAttribute("id", i);
+                var subNode1 = document.createElement("INPUT");
+                subNode1.setAttribute("type", "checkbox");
+                var textnode = document.createElement("label");
+                textnode.innerHTML = arr[i];
+                node.appendChild(subNode1);
+                node.appendChild(textnode);
+                document.getElementById("ba-list").appendChild(node);
+            }
+            if(arr.length != 0){
+                var button = document.createElement("button");
+                button.setAttribute('type', "button");
+                button.setAttribute('onclick', "inviteBas()");
+                button.innerHTML = "Invite";
+                document.getElementById("ba-list").lastChild.appendChild(button);
+            }
+            else
+                {
+                    var paragraph = document.createElement("p");
+                    button.innerHTML = "All BAs already invited";
+                    document.getElementById("ba-list").appendChild(button);
+                }
+        }
+
+    };
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    xhttp.open("GET", "/getBasNotInProject", true);
+    xhttp.setRequestHeader('projectId', pid);
+    xhttp.send();
+}
+
+function inviteBas() {
+    //var name = document.getElementById("projectName").value;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+
+    if(mails.length != 0 && pid){
+        $.ajax({
+            type: "POST",
+            data: { data : mails,
+                'projectId' :pid
+            },
+            url: "/sendEmailToBA",
+            success: function () {
+                console.log('Successful');
+            }
+        });
+    }        
+}
+
+function invite() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            // document.getElementById("demo").innerHTML = this.responseText;
+        }
+    };
+    //var name = document.getElementById("projectName").value;
+    var mail = document.getElementById("clientMail").value;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    xhttp.open("GET", "/sendEmail?pid=" + pid + "&" + "mail=" + mail, true);
+    xhttp.send();
+    document.getElementById("clientMail").value = "";
+
+}
+
+</script>
 <%- include('../layouts/footer'); -%>
