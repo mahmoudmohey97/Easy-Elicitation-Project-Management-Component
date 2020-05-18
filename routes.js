@@ -21,5 +21,8 @@ router.get('/baInvitation', projectController.handleBAInvitationLink);
 router.get('/getBasInCompany', businessAnalystController.getBAsInMyCompany);
 router.get('/getBasNotInProject', projectController.getBAsNotInProject);
 router.get('/leaveProject', projectController.leaveProject);
+router.post('/removeBa', projectController.removeBa);
+router.post('/removeClient', projectController.removeClient);
+router.get('/leaveProject', projectController.leaveProject);
 //router.get('/baInvitation', projectController.handlebaInvitationLink)
 module.exports = router;

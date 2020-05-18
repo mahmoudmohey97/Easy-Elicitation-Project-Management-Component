@@ -1,6 +1,9 @@
 <%- include('../layouts/header'); -%>
     <h1>Project's diagrams</h1>
     <%
+        var privelages;
+        console.log(userId);
+        owner.id == userId ? privelages=true : privelages=false ;
         if(auth){
     %>
     <div> 
@@ -21,6 +24,7 @@
     </div>
 
     <% }
+        console.log(privelages);
         if(diagrams.length == 0){
     %>
             <div> No Created diagrams yet </div>
@@ -74,7 +78,7 @@
 <div>
     <h3>Business Analysts in Project</h3>
     
-    <%           
+    <%if(!privelages){          
         for(var i = 0 ; i < businessAnalysts.length ; i++){
     %>
             <div>
@@ -82,7 +86,20 @@
             </div>
     <%
         }
+    }
+    else{
+        for(var i = 0 ; i < businessAnalysts.length ; i++){
     %>
+        <div>
+            <%= businessAnalysts[i].name %>
+            <button onclick="removeBusinessAnalyst('<%=businessAnalysts[i].businessAnalystId%>')">
+                remove
+            </button>
+        </div>
+    <%}
+    }
+    %>
+
     <% if(auth)
         {%>
         <button onclick="getBasInProjectHome()" id="addBusinessanalyst">Add Business Analyst</button> 
@@ -99,26 +116,45 @@
     <%    
         }
 
+        if(!privelages){
+            for(var i = 0 ; i < clients.length ; i++){
+        %>
+                <div>
+                    <%= clients[i].name %>
+                </div>
+    <%  }
+    }
+    else{
         for(var i = 0 ; i < clients.length ; i++){
     %>
             <div>
                 <%= clients[i].name %>
+                <button onclick="removeClient('<%=clients[i].clientId%>')">
+                    remove
+                </button>
             </div>
-    <%
-        }
+    <%    }    
+    }
     %> 
 </div>
-<div>
-    <button>
-        <a href="/leaveProject">Leave 3ashan z3lt</a>
-    </button>
-</div>
 <% if(auth)
-        {%>
+{%>
     <label for="email"><b> invite Client</b></label>
     <input type="text" id="clientMail"  placeholder="Client Mail" name="clientMail">
     <button type="button"  onclick="invite()">Invite</button>
-    <%}%>
+<%}%>
+<div>
+    <button>
+    <% if(!privelages) {
+        %>
+        <a href="/leaveProject">Leave 3ashan z3lt</a>
+        <%}
+    else{
+        %>
+        <a>delete project</a>
+  <%  } %>
+    </button>
+</div>
 <script>
 
 var mails = [];
@@ -265,5 +301,36 @@ function invite() {
 
 }
 
+function removeBusinessAnalyst(baid){
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            location.reload(true);
+        }
+    };
+    xhttp.open("POST", 'removeBa', true);
+    xhttp.setRequestHeader('pid', pid);
+    xhttp.setRequestHeader('baid', baid);
+    xhttp.send();
+    
+}
+
+function removeClient(cid){
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            location.reload(true);
+        }
+    };
+    xhttp.open("POST", 'removeClient', true);
+    xhttp.setRequestHeader('pid', pid);
+    xhttp.setRequestHeader('cid', cid);
+    xhttp.send();
+    
+}
 </script>
 <%- include('../layouts/footer'); -%>

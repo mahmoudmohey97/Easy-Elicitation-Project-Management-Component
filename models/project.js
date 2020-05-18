@@ -236,3 +236,44 @@ module.exports.leaveProject = function(req){
 		console.log('done');
 	});
 }
+//needs to pass pid
+module.exports.leaveProject = function(req){
+	var sql = '';
+	var inserts ; 
+	if(req.session.baid){
+		sql = "delete from businessanalystparticipant where businessAnalystId = ? " ;
+		inserts = [req.session.baid];
+	}
+	else if(req.session.cid){
+		sql = "delete from clientparticipant where clientId = ? " ;
+		inserts = [req.session.cid];
+	}
+	else{
+		console.log('wala 7aga mn dool ya ostaz');	
+	}
+	sql = con.format(sql, inserts);
+	con.query(sql, function(error){
+		if(error) throw error;
+		//console.log('done');
+	});
+}
+
+module.exports.removeBaFromProject = function(pid, baid){
+	sql = "delete from businessanalystparticipant where businessAnalystId = ? and projectId = ? " ;
+	inserts = [baid, pid];
+	sql = con.format(sql, inserts);
+	con.query(sql, function(error){
+		if(error) throw error;
+		//console.log('done BA');
+	});
+}
+
+module.exports.removeClientFromProject = function(pid, cid){
+	sql = "delete from clientparticipant where clientId = ? and projectId = ? " ;
+	inserts = [cid, pid];
+	sql = con.format(sql, inserts);
+	con.query(sql, function(error){
+		if(error) throw error;
+		//console.log('done CLIENT');
+	});
+}
