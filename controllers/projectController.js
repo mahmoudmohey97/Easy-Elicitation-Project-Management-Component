@@ -22,7 +22,7 @@ module.exports.projectHome = function (req, res) {
                                 auth: ba, diagrams: projectDiagrams, businessAnalysts: baParticipants,
                                 clients: clientsParticipants, userId : req.session.baid,
                                 owner: { email: owner.email, name: owner.name, id: owner.businessAnalystId },
-                                attachements: attachements
+                                attachements: attachements, projectId: req.query.pid
                         });
                         });
                     });
@@ -213,14 +213,14 @@ module.exports.getBAsNotInProject = function(req, res){
 
 module.exports.leaveProject = function(req, res){
     console.log(req.query.pid);
-    /*model.leaveProject(req);
+    model.leaveProject(req, req.query.pid);
     if(req.session.baid){
         res.redirect('/ba');
     }
     else{
 
         res.redirect('/client');
-    }*/
+    }
 }
 
 module.exports.removeBa = function(req, res){
@@ -233,4 +233,10 @@ module.exports.removeClient = function(req, res){
     model.removeClientFromProject(req.get('pid'), req.get('cid'));
     res.redirect('/project?pid='+req.get('pid'))
     //console.log(req.get('pid'), req.get('baid'));
+}
+
+module.exports.deleteProject = function(req, res){
+    //console.log(req.query.pid);
+    model.deleteProject(req.query.pid);
+    res.redirect('/ba');
 }

@@ -24,5 +24,6 @@ router.get('/leaveProject', projectController.leaveProject);
 router.post('/removeBa', projectController.removeBa);
 router.post('/removeClient', projectController.removeClient);
 router.get('/leaveProject', projectController.leaveProject);
+router.get('/deleteProject', projectController.deleteProject);
 //router.get('/baInvitation', projectController.handlebaInvitationLink)
 module.exports = router;

@@ -147,11 +147,11 @@
     <button>
     <% if(!privelages) {
         %>
-        <a href="/leaveProject">Leave 3ashan z3lt</a>
+        <a href="/leaveProject?pid=<%=projectId%>">Leave 3ashan z3lt</a>
         <%}
     else{
         %>
-        <a>delete project</a>
+        <a href="/deleteProject?pid=<%=projectId%>">delete project</a>
   <%  } %>
     </button>
 </div>

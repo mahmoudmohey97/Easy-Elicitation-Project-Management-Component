@@ -193,10 +193,6 @@ module.exports.getAllAttachments = function(projectId, callback){
 	});
 }
 
-/////////// diagram relations remaining
-
-
-
 module.exports.getBAsNotInProject = function (projectId, ownerId, callback) {
 	let sql = "SELECT * \
 	FROM businessanalyst \
@@ -216,15 +212,15 @@ module.exports.getBAsNotInProject = function (projectId, ownerId, callback) {
 	})	
 }
 
-module.exports.leaveProject = function(req){
+module.exports.leaveProject = function(req, pid){
 	var sql = '';
 	var inserts ; 
 	if(req.session.baid){
-		sql = "delete from businessanalystparticipant where businessAnalystId = ? " ;
-		inserts = [req.session.baid];
+		sql = "delete from businessanalystparticipant where businessAnalystId = ? and projectId = ?" ;
+		inserts = [req.session.baid, pid];
 	}
 	else if(req.session.cid){
-		sql = "delete from clientparticipant where clientId = ? " ;
+		sql = "delete from clientparticipant where clientId = ? and projectId = ?" ;
 		inserts = [req.session.cid];
 	}
 	else{
@@ -234,27 +230,6 @@ module.exports.leaveProject = function(req){
 	con.query(sql, function(error){
 		if(error) throw error;
 		console.log('done');
-	});
-}
-//needs to pass pid
-module.exports.leaveProject = function(req){
-	var sql = '';
-	var inserts ; 
-	if(req.session.baid){
-		sql = "delete from businessanalystparticipant where businessAnalystId = ? " ;
-		inserts = [req.session.baid];
-	}
-	else if(req.session.cid){
-		sql = "delete from clientparticipant where clientId = ? " ;
-		inserts = [req.session.cid];
-	}
-	else{
-		console.log('wala 7aga mn dool ya ostaz');	
-	}
-	sql = con.format(sql, inserts);
-	con.query(sql, function(error){
-		if(error) throw error;
-		//console.log('done');
 	});
 }
 
@@ -275,5 +250,15 @@ module.exports.removeClientFromProject = function(pid, cid){
 	con.query(sql, function(error){
 		if(error) throw error;
 		//console.log('done CLIENT');
+	});
+}
+
+module.exports.deleteProject = function(pid){
+	sql = "delete from project where projectId = ?";
+	inserts = [pid];
+	sql = con.format(sql, inserts);
+	con.query(sql, function(error){
+		if(error) throw error;
+		console.log('project deleted');
 	});
 }
