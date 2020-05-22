@@ -1,5 +1,6 @@
 const model = require('../models/project');
 const sendMailModel = require('../sendmail');
+const diagramModel = require('../models/diagram');
 const encryptModel = require('../models/encrypt_decrypt')
 const clientModel = require('../models/client')
 const businessAnalystModel = require('../models/businessAnalyst')
@@ -13,7 +14,7 @@ module.exports.projectHome = function (req, res) {
     if (req.session.baid || req.session.cid) {
         model.getProjectBa(req.query.pid, function (baParticipants) {
             model.getProjectClients(req.query.pid, function (clientsParticipants) {
-                model.showProjectDiagrams(req, function (projectDiagrams) {
+                diagramModel.showProjectDiagrams(req, function (projectDiagrams) {
                     req.query = {pid : req.query.pid}
                     model.getProjectOwner(req.query.pid, function (owner) {
                         model.getAllAttachments(req.query.pid, function(attachements){
@@ -90,13 +91,6 @@ module.exports.handleClientInvitationLink = function (req, res) {
         // redirect 3la el funtion de
         res.render("errors/404")
     }
-}
-
-module.exports.createDiagram = function (req, res) {
-    var name = req.get('name');
-    var description = req.get('description');
-    var projectId = req.get('pid');
-    model.addDiagram(name, description, projectId);
 }
 
 module.exports.inviteBA = function (req, res) {
@@ -213,13 +207,17 @@ module.exports.getBAsNotInProject = function(req, res){
 
 module.exports.leaveProject = function(req, res){
     console.log(req.query.pid);
-    model.leaveProject(req, req.query.pid);
     if(req.session.baid){
+        model.leaveProject(req, req.query.pid);
         res.redirect('/ba');
     }
-    else{
-
+    else if(req.session.cid){
+        model.leaveProject(req, req.query.pid);
         res.redirect('/client');
+    }
+    else{
+        //login
+        console("u must login");
     }
 }
 

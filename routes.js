@@ -3,7 +3,7 @@ var router = express.Router();
 
 
 var projectController = require('./controllers/projectController');
-var mailer = require('./sendmail');
+var diagramController = require('./controllers/diagramController');
 var businessAnalystController = require('./controllers/businessAnalystController');
 var clientController = require('./controllers/clientController');
 
@@ -11,7 +11,7 @@ router.get('/project', projectController.projectHome);
 router.post('/createProject', projectController.createProject);
 //router.get('/up', projectController.send);
 router.post('/upload', projectController.uploadFile);
-router.post('/createDiagram', projectController.createDiagram);
+router.post('/createDiagram', diagramController.createDiagram);
 router.get('/ba', businessAnalystController.home);
 router.get('/client', clientController.home);
 router.get('/sendEmail', projectController.inviteClient);
@@ -25,5 +25,9 @@ router.post('/removeBa', projectController.removeBa);
 router.post('/removeClient', projectController.removeClient);
 router.get('/leaveProject', projectController.leaveProject);
 router.get('/deleteProject', projectController.deleteProject);
+router.get('/deleteDiagram', diagramController.deleteDiagram);
+router.post("/createDiagramRelation", diagramController.addDiagramRelation);
+router.get("/getProjectRelations", diagramController.projectRelations); // for diagram relations
+router.get("/deleteRelation", diagramController.deleteDiagramRelation);
 //router.get('/baInvitation', projectController.handlebaInvitationLink)
 module.exports = router;

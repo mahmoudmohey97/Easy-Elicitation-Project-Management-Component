@@ -37,13 +37,47 @@
                     <%= diagrams[i].name %>
                     <%= diagrams[i].description %>
                     <a href="<%= diagrams[i].serializedDiagram %>"> open </a>
+                    <% if (auth){
+                       %>
+                      
+                        <button>
+                            <a href="/deleteDiagram?did=<%=diagrams[i].diagramId%>"> Delete</a>
+                        </button>
+                        
+                       
+                        <button onclick="openForm('diagramRelation<%=i%>')">
+                            Add relation
+                        </button>
+
+                        <div class="form-popup" id="diagramRelation<%=i%>" style="display: none;">
+                            <form action="" onsubmit="return reloadFun()" class="form-container" >
+                    
+                                <label>Choose diagram:</label>
+                                <select id="diagramRelationSelector<%=i%>">
+                                <%for(var j = 0 ; j < diagrams.length ; j++){
+                                    if(diagrams[i].name != diagrams[j].name)
+                                    {
+                                    %>    
+                                        <option value="<%=diagrams[j].diagramId%>"> <%=diagrams[j].name%> </option>
+                               <%     }
+                                } %>
+                                </select>   
+                                <input id="relationName<%=i%>" type="text" placeholder="relation name" required>
+                                <button type="submit" onclick="addDiagramRelation('diagramRelationSelector<%=i%>', '<%=diagrams[i].diagramId%>', 'relationName<%=i%>')">Add</button>
+                                <button type="button" onclick="closeForm('diagramRelation<%=i%>')">Close</button>
+                            </form>
+                        </div>
+            
+                    <%}%>
                 </div>
     <%      
             }
         }
     %>
-
-
+        <br>
+        <a href="/getProjectRelations?pid=<%=projectId%>"> View Relations </a>
+        <br>
+        
 <h2> Attachments</h2>
 <div> 
     <button class="open-button" onclick="openForm('attachmentForm')"> Add attachement</button>
@@ -184,6 +218,28 @@ function openForm(id) {
 
 function closeForm(id) {
     document.getElementById(id).style.display = "none";
+}
+
+function addDiagramRelation(id, diagram1Id, relationName){
+    var e = document.getElementById(id);
+    var diagram2Id = e.options[e.selectedIndex].value;
+    diagramRelationName = document.getElementById(relationName).value;
+    var xhttp = new XMLHttpRequest();
+    let url = window.location.href;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+
+        }
+    };
+    xhttp.open("POST", "/createDiagramRelation", true);
+    xhttp.setRequestHeader('pid', pid)
+    xhttp.setRequestHeader("diagram1Id", diagram1Id);
+    xhttp.setRequestHeader('diagram2Id', diagram2Id);
+    xhttp.setRequestHeader('relationName', diagramRelationName);
+    xhttp.send();
+    
 }
 
 function create() {
