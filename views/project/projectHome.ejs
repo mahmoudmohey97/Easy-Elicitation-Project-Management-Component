@@ -1,10 +1,13 @@
 <%- include('../layouts/header'); -%>
     <h1>Project's diagrams</h1>
     <%
+        var privelages;
+        console.log(userId);
+        owner.id == userId ? privelages=true : privelages=false ;
         if(auth){
     %>
     <div> 
-        <button class="open-button" onclick="openForm()"> New diagram</button>
+        <button class="open-button" onclick="openForm('myForm')"> New diagram</button>
     </div>
     <div class="form-popup" id="myForm" style="display: none;">
         <form action="" onsubmit="return reloadFun()" class="form-container" id="diagram">
@@ -16,11 +19,12 @@
             <input type="text" id="diagramDescription"  placeholder="Diagram Description" required>
             <br>            
             <button type="submit" onclick="create()">Create Diagram</button>
-            <button type="button" onclick="closeForm()">Close</button>
+            <button type="button" onclick="closeForm('myform')">Close</button>
         </form>
     </div>
 
     <% }
+        console.log(privelages);
         if(diagrams.length == 0){
     %>
             <div> No Created diagrams yet </div>
@@ -32,11 +36,72 @@
                 <div>
                     <%= diagrams[i].name %>
                     <%= diagrams[i].description %>
+                    <a href="<%= diagrams[i].serializedDiagram %>"> open </a>
+                    <% if (auth){
+                       %>
+                      
+                        <button>
+                            <a href="/deleteDiagram?did=<%=diagrams[i].diagramId%>"> Delete</a>
+                        </button>
+                        
+                       
+                        <button onclick="openForm('diagramRelation<%=i%>')">
+                            Add relation
+                        </button>
+
+                        <div class="form-popup" id="diagramRelation<%=i%>" style="display: none;">
+                            <form action="" onsubmit="return reloadFun()" class="form-container" >
+                    
+                                <label>Choose diagram:</label>
+                                <select id="diagramRelationSelector<%=i%>">
+                                <%for(var j = 0 ; j < diagrams.length ; j++){
+                                    if(diagrams[i].name != diagrams[j].name)
+                                    {
+                                    %>    
+                                        <option value="<%=diagrams[j].diagramId%>"> <%=diagrams[j].name%> </option>
+                               <%     }
+                                } %>
+                                </select>   
+                                <input id="relationName<%=i%>" type="text" placeholder="relation name" required>
+                                <button type="submit" onclick="addDiagramRelation('diagramRelationSelector<%=i%>', '<%=diagrams[i].diagramId%>', 'relationName<%=i%>')">Add</button>
+                                <button type="button" onclick="closeForm('diagramRelation<%=i%>')">Close</button>
+                            </form>
+                        </div>
+            
+                    <%}%>
                 </div>
     <%      
             }
         }
     %>
+        <br>
+        <a href="/getProjectRelations?pid=<%=projectId%>"> View Relations </a>
+        <br>
+        
+<h2> Attachments</h2>
+<div> 
+    <button class="open-button" onclick="openForm('attachmentForm')"> Add attachement</button>
+</div>
+<div class="form-popup" id="attachmentForm" style="display: none;">
+    <form method="POST" action="" onsubmit="return reloadFun()" class="form-container" id="attachment">
+        <div>File: <input type="file" name="someExpressFiles" multiple="multiple" /></div>
+        <button type="button" onclick="closeForm('attachmentForm')">Close</button>
+        <input type="submit" onclick="addAttachment()" value="Upload" />
+        </form>
+</div>
+<div>
+    <% if(attachements.length > 0){  
+            for(var i = 0 ; i < attachements.length; i++)
+            { %>
+                <div>  
+                    <a href="<%=attachements[i].link%>"> <%=attachements[i].name%> </a>               
+                </div>  
+        <%    
+            }
+        }%>
+</div>
+
+
 
 <h2>Created by</h2>
 <div>
@@ -46,7 +111,8 @@
 <h2>Participants</h2>
 <div>
     <h3>Business Analysts in Project</h3>
-    <%           
+    
+    <%if(!privelages){          
         for(var i = 0 ; i < businessAnalysts.length ; i++){
     %>
             <div>
@@ -54,11 +120,29 @@
             </div>
     <%
         }
-    %> 
+    }
+    else{
+        for(var i = 0 ; i < businessAnalysts.length ; i++){
+    %>
+        <div>
+            <%= businessAnalysts[i].name %>
+            <button onclick="removeBusinessAnalyst('<%=businessAnalysts[i].businessAnalystId%>')">
+                remove
+            </button>
+        </div>
+    <%}
+    }
+    %>
+
+    <% if(auth)
+        {%>
+        <button onclick="getBasInProjectHome()" id="addBusinessanalyst">Add Business Analyst</button> 
+    <%}%>
+    <div id="ba-list"> </div>
 </div>
 
 <div>
-    <h4>Clients in Project</h4>
+    <h3>Clients in Project</h3>
     <% 
         if(clients.length == 0){
     %>
@@ -66,17 +150,60 @@
     <%    
         }
 
+        if(!privelages){
+            for(var i = 0 ; i < clients.length ; i++){
+        %>
+                <div>
+                    <%= clients[i].name %>
+                </div>
+    <%  }
+    }
+    else{
         for(var i = 0 ; i < clients.length ; i++){
     %>
             <div>
                 <%= clients[i].name %>
+                <button onclick="removeClient('<%=clients[i].clientId%>')">
+                    remove
+                </button>
             </div>
-    <%
-        }
+    <%    }    
+    }
     %> 
 </div>
-
+<% if(auth)
+{%>
+    <label for="email"><b> invite Client</b></label>
+    <input type="text" id="clientMail"  placeholder="Client Mail" name="clientMail">
+    <button type="button"  onclick="invite()">Invite</button>
+<%}%>
+<div>
+    <button>
+    <% if(!privelages) {
+        %>
+        <a href="/leaveProject?pid=<%=projectId%>">Leave 3ashan z3lt</a>
+        <%}
+    else{
+        %>
+        <a href="/deleteProject?pid=<%=projectId%>">delete project</a>
+  <%  } %>
+    </button>
+</div>
 <script>
+
+var mails = [];
+$(document).ready(function () {
+    $(document).on("click", 'input[type="checkbox"]', function (e) {
+        var checkedMail = $(this).parent().children()[1].innerHTML;
+        if ($(this).prop("checked") == true) {
+            mails.push(checkedMail);
+        }
+        else if ($(this).prop("checked") == false) {
+            const index = mails.indexOf(checkedMail);
+            mails.splice(index, 1);
+        }
+    });
+});
 
 function reloadFun(){
     let url = window.location.href;
@@ -84,12 +211,35 @@ function reloadFun(){
     return false;
     
 }
-function openForm() {
-    document.getElementById("myForm").style.display = "block";
+
+function openForm(id) {
+    document.getElementById(id).style.display = "block";
 }
 
-function closeForm() {
-    document.getElementById("myForm").style.display = "none";
+function closeForm(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+function addDiagramRelation(id, diagram1Id, relationName){
+    var e = document.getElementById(id);
+    var diagram2Id = e.options[e.selectedIndex].value;
+    diagramRelationName = document.getElementById(relationName).value;
+    var xhttp = new XMLHttpRequest();
+    let url = window.location.href;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+
+        }
+    };
+    xhttp.open("POST", "/createDiagramRelation", true);
+    xhttp.setRequestHeader('pid', pid)
+    xhttp.setRequestHeader("diagram1Id", diagram1Id);
+    xhttp.setRequestHeader('diagram2Id', diagram2Id);
+    xhttp.setRequestHeader('relationName', diagramRelationName);
+    xhttp.send();
+    
 }
 
 function create() {
@@ -109,12 +259,134 @@ function create() {
     xhttp.setRequestHeader("name", name);
     xhttp.setRequestHeader('description', description);
     xhttp.send();
-/*xhttp.addEventListener("load", function (event) {
-    console.log(this);
-    console.log(this)
-});   
-// xhttp.onload = () => alert(xhttp.response);*/
+}
+
+function addAttachment() {
+    var xhttp = new XMLHttpRequest();
+    let url = window.location.href;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    
+    formData = new FormData();
+    formData.append('file', $('input[type=file]')[0].files[0]);
+    formData.append('pid', pid);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+        }
+    };
+    console.log(formData.get('file'));
+    xhttp.open("POST", "/upload", true);
+    xhttp.send(formData);
+}
+
+function getBasInProjectHome() {
+    if (document.getElementById("ba-list").childElementCount != 0) {
+        return;
+    }
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var arr = this.responseText.split(",");
+            for (var i = 0; i < arr.length; ++i) {
+                var node = document.createElement("DIV");
+                node.setAttribute("id", i);
+                var subNode1 = document.createElement("INPUT");
+                subNode1.setAttribute("type", "checkbox");
+                var textnode = document.createElement("label");
+                textnode.innerHTML = arr[i];
+                node.appendChild(subNode1);
+                node.appendChild(textnode);
+                document.getElementById("ba-list").appendChild(node);
+            }
+            if(arr.length != 0){
+                var button = document.createElement("button");
+                button.setAttribute('type', "button");
+                button.setAttribute('onclick', "inviteBas()");
+                button.innerHTML = "Invite";
+                document.getElementById("ba-list").lastChild.appendChild(button);
+            }
+            else
+                {
+                    var paragraph = document.createElement("p");
+                    button.innerHTML = "All BAs already invited";
+                    document.getElementById("ba-list").appendChild(button);
+                }
+        }
+
+    };
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    xhttp.open("GET", "/getBasNotInProject", true);
+    xhttp.setRequestHeader('projectId', pid);
+    xhttp.send();
+}
+
+function inviteBas() {
+    //var name = document.getElementById("projectName").value;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+
+    if(mails.length != 0 && pid){
+        $.ajax({
+            type: "POST",
+            data: { data : mails,
+                'projectId' :pid
+            },
+            url: "/sendEmailToBA",
+            success: function () {
+                console.log('Successful');
+            }
+        });
+    }        
+}
+
+function invite() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            // document.getElementById("demo").innerHTML = this.responseText;
+        }
+    };
+    //var name = document.getElementById("projectName").value;
+    var mail = document.getElementById("clientMail").value;
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    xhttp.open("GET", "/sendEmail?pid=" + pid + "&" + "mail=" + mail, true);
+    xhttp.send();
+    document.getElementById("clientMail").value = "";
+
+}
+
+function removeBusinessAnalyst(baid){
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            location.reload(true);
+        }
+    };
+    xhttp.open("POST", 'removeBa', true);
+    xhttp.setRequestHeader('pid', pid);
+    xhttp.setRequestHeader('baid', baid);
+    xhttp.send();
+    
+}
+
+function removeClient(cid){
+    let params = new URLSearchParams(location.search);
+    pid = params.get('pid');
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            location.reload(true);
+        }
+    };
+    xhttp.open("POST", 'removeClient', true);
+    xhttp.setRequestHeader('pid', pid);
+    xhttp.setRequestHeader('cid', cid);
+    xhttp.send();
+    
 }
 </script>
-
 <%- include('../layouts/footer'); -%>

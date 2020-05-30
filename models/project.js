@@ -42,7 +42,7 @@ module.exports.getClientProjects = function (req, callback) {
 		// console.log(results);
 		callback(results);
 	});
-	
+
 };
 
 /*******************************
@@ -57,7 +57,7 @@ module.exports.getProjectClients = function (id, callback) {
 		//console.log(results);
 		callback(results);
 	});
-	
+
 };
 
 /*******************************
@@ -77,11 +77,11 @@ module.exports.getProjectBa = function (id, callback) {
 /*******************************
 * 	create project
 *******************************/
-module.exports.createProject = function(baId, name){
+module.exports.createProject = function (baId, name) {
 	let sql = "insert into project (name, approval, businessAnalystId) values (?, 0, ?)"
 	let inserts = [name, baId]
 	sql = con.format(sql, inserts)
-	con.query(sql, function(error, results){
+	con.query(sql, function (error, results) {
 		if (error) throw error;
 		// console.log(results);
 	});
@@ -91,18 +91,29 @@ module.exports.createProject = function(baId, name){
 /*******************************
 * 	get project BY BAId AND PROJECT NAME
 *******************************/
-module.exports.getProjectByBaAndName = function(baId, name, callback){
+module.exports.getProjectByBaAndName = function (baId, name, callback) {
 	let sql = "SELECT * FROM project WHERE businessAnalystId = ? AND name = ? "
 	let inserts = [baId, name]
 	sql = con.format(sql, inserts)
-	con.query(sql, function(error, results){
+	con.query(sql, function (error, results) {
 		if (error) throw error;
 		callback(results);
+	});
+};
+
+module.exports.getProjectById = function (projectId, callback) {
+	let sql = "SELECT * FROM project WHERE projectId = ?"
+	let inserts = [projectId]
+	sql = con.format(sql, inserts)
+	con.query(sql, function (error, results) {
+		if (error) throw error;
+		console.log(results)
+		callback(results[0]);
 	});
 
 };
 
-module.exports.clientInvitation = function(clientId, projectId, callback){
+module.exports.clientInvitation = function (clientId, projectId, callback) {
 	let sql = "INSERT INTO clientparticipant (clientId, projectId) values (?, ?)";
 	let inserts = [clientId, projectId];
 	sql = con.format(sql, inserts);
@@ -114,8 +125,7 @@ module.exports.clientInvitation = function(clientId, projectId, callback){
 	});
 };
 
-
-module.exports.businessAnalystInvitation = function(businessAnalystId, projectId, callback){
+module.exports.businessAnalystInvitation = function (businessAnalystId, projectId, callback) {
 	let sql = "INSERT INTO businessanalystparticipant (businessanalystId, projectId) values (?, ?)";
 	let inserts = [businessAnalystId, projectId];
 	sql = con.format(sql, inserts);
@@ -127,37 +137,106 @@ module.exports.businessAnalystInvitation = function(businessAnalystId, projectId
 	});
 };
 
-module.exports.showProjectDiagrams = function(req, callback){
-	let sql = "select * from diagram where projectId=?"
-	let inserts = [req.query.pid];
-	//console.log(inserts);
-	sql = con.format(sql, inserts);
-	con.query(sql, function(error, results){
-		if (error) throw error;
-		//console.log(results);
-		callback(results);
-	})
-};
-
-
-module.exports.getProjectOwner = function(id, callback){
+module.exports.getProjectOwner = function (id, callback) {
 	let sql = "select * from project as p, businessanalyst as ba where p.projectId = ? AND p.businessanalystId = ba.businessanalystId"
 	let inserts = [id];
 	//console.log(inserts);
 	sql = con.format(sql, inserts);
-	con.query(sql, function(error, results){
+	con.query(sql, function (error, results) {
 		if (error) throw error;
 		//console.log(results);
 		callback(results[0]);
 	})
 };
-module.exports.addDiagram = function(name, description, projectId){
-	let sql = "insert into diagram(approval, serializedDiagram, name, description, projectId) values(0, '', ?, ?, ?)"
-	let inserts = [name, description, projectId];
-	sql = con.format(sql, inserts);
-	con.query(sql, function(error){
-		if(error) throw error;
-		console.log('added successfully')
-	});
-};
 
+module.exports.addPdfAttachment = function (name, link, projectId) {
+	let sql = "insert into attachment (name, link, projectId) values(?, ?, ?)";
+	inserts = [name, link, projectId];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error) {
+		if (error) throw error;
+		console.log('added succesfully');
+	})
+}
+
+//PDF attachements
+module.exports.getAllAttachments = function (projectId, callback) {
+	sql = "select name , link from attachment where projectId = ? and diagramId IS NULL";
+	inserts = [projectId];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error, results) {
+		if (error) throw error;
+		//console.log(results);
+		callback(results)
+	});
+}
+
+module.exports.getBAsNotInProject = function (projectId, ownerId, callback) {
+	let sql = "SELECT * \
+	FROM businessanalyst \
+	WHERE businessanalyst.businessAnalystId not in(\
+		SELECT businessanalystparticipant.businessAnalystId\
+		FROM businessanalystparticipant\
+		WHERE businessanalystparticipant.projectId = ?)\
+	AND businessanalyst.businessAnalystId != ?\
+	AND businessanalyst.companyName IN (SELECT companyName FROM businessanalyst as ba WHERE ba.businessAnalystId = ?)"
+
+	let inserts = [projectId, ownerId, ownerId];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error, results) {
+		if (error) throw error;
+		console.log(results);
+		callback(results);
+	})
+}
+
+module.exports.leaveProject = function (req, pid) {
+	var sql = '';
+	var inserts;
+	if (req.session.baid) {
+		sql = "delete from businessanalystparticipant where businessAnalystId = ? and projectId = ?";
+		inserts = [req.session.baid, pid];
+	}
+	else if (req.session.cid) {
+		sql = "delete from clientparticipant where clientId = ? and projectId = ?";
+		inserts = [req.session.cid];
+	}
+	else {
+		console.log('wala 7aga mn dool ya ostaz');
+	}
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error) {
+		if (error) throw error;
+		//console.log('done');
+	});
+}
+
+module.exports.removeBaFromProject = function (pid, baid) {
+	sql = "delete from businessanalystparticipant where businessAnalystId = ? and projectId = ? ";
+	inserts = [baid, pid];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error) {
+		if (error) throw error;
+		//console.log('done BA');
+	});
+}
+
+module.exports.removeClientFromProject = function (pid, cid) {
+	sql = "delete from clientparticipant where clientId = ? and projectId = ? ";
+	inserts = [cid, pid];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error) {
+		if (error) throw error;
+		//console.log('done CLIENT');
+	});
+}
+
+module.exports.deleteProject = function (pid) {
+	sql = "delete from project where projectId = ?";
+	inserts = [pid];
+	sql = con.format(sql, inserts);
+	con.query(sql, function (error) {
+		if (error) throw error;
+		//console.log('project deleted');
+	});
+}
