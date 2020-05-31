@@ -13,6 +13,7 @@ router.post('/createProject', projectController.createProject);
 router.post('/upload', projectController.uploadFile);
 router.post('/createDiagram', diagramController.createDiagram);
 router.get('/ba', businessAnalystController.home);
+router.post('/ba', businessAnalystController.home);
 router.get('/client', clientController.home);
 router.get('/sendEmail', projectController.inviteClient);
 router.post('/sendEmailToBA', projectController.inviteBA);

@@ -15,16 +15,16 @@ module.exports.projectHome = function (req, res) {
         model.getProjectBa(req.query.pid, function (baParticipants) {
             model.getProjectClients(req.query.pid, function (clientsParticipants) {
                 diagramModel.showProjectDiagrams(req, function (projectDiagrams) {
-                    req.query = {pid : req.query.pid}
+                    req.query = { pid: req.query.pid }
                     model.getProjectOwner(req.query.pid, function (owner) {
-                        model.getAllAttachments(req.query.pid, function(attachements){
+                        model.getAllAttachments(req.query.pid, function (attachements) {
                             var ba = (!req.session.baid) ? false : true;
                             res.render('project/projectHome', {
                                 auth: ba, diagrams: projectDiagrams, businessAnalysts: baParticipants,
-                                clients: clientsParticipants, userId : req.session.baid,
+                                clients: clientsParticipants, userId: req.session.baid,
                                 owner: { email: owner.email, name: owner.name, id: owner.businessAnalystId },
                                 attachements: attachements, projectId: req.query.pid
-                        });
+                            });
                         });
                     });
                 });
@@ -37,7 +37,7 @@ module.exports.projectHome = function (req, res) {
 };
 
 module.exports.inviteClient = function (req, res) {
-    if(req.query.name){
+    if (req.query.name) {
         model.getProjectByBaAndName(req.session.baid, req.query.name, function (result) {
             encryptModel.encrypt(req.query.mail, function (encryptedMail) {
                 mail = encryptedMail;
@@ -46,7 +46,7 @@ module.exports.inviteClient = function (req, res) {
             })
         });
     }
-    else{
+    else {
         model.getProjectById(req.query.pid, function (project) {
             encryptModel.encrypt(req.query.mail, function (encryptedMail) {
                 mail = encryptedMail;
@@ -97,7 +97,7 @@ module.exports.inviteBA = function (req, res) {
     mail = req.body['data[]'];
     name = req.body['name'];
     projectId = req.body['projectId'];
-    if(!name){
+    if (!name) {
         model.getProjectById(projectId, function (project) {
             encryptModel.encrypt(mail, function (encryptedMail) {
                 encryptedMail = encryptedMail;
@@ -107,7 +107,7 @@ module.exports.inviteBA = function (req, res) {
             });
         });
     }
-    else{
+    else {
         model.getProjectByBaAndName(req.session.baid, name, function (result) {
             encryptModel.encrypt(mail, function (encryptedMail) {
                 encryptedMail = encryptedMail;
@@ -156,84 +156,88 @@ module.exports.handleBAInvitationLink = function (req, res) {
 
 module.exports.createProject = function (req, res) {
     // console.log(req.body.name, req.session.baid);
-    model.createProject(req.session.baid, req.body.name);
-    res.redirect(req.get('referer'));
+    model.createProject(req.session.baid, req.body.name, function (out) {
+        if (out === -1)
+            res.sendStatus(400)
+        else
+            res.sendStatus(200);
+    });
 
 }
 
-module.exports.uploadFile = function(req, res){
+module.exports.uploadFile = function (req, res) {
     const form = new formidable.IncomingForm();
     form.parse(req, (error, fields, files) => {
-        if(error) throw error;
+        if (error) throw error;
         const file = files.file
-        if(!(file.type.includes('pdf'))){
+        if (!(file.type.includes('pdf'))) {
             console.log('only pdf file can be uploaded');
             return false;
         }
 
         filePath = file.path;
-        filename = Math.floor(new Date() / 1000) + '_' + file.name ;
+        filename = Math.floor(new Date() / 1000) + '_' + file.name;
         newPath = path.join(`./public/attachements/${filename}`);
-        mv(filePath, newPath, error =>{
-            if(error) throw error;
+        mv(filePath, newPath, error => {
+            if (error) throw error;
         }
         );
         link = `/attachements/${filename}`;
-        projectId = fields.pid; 
+        projectId = fields.pid;
         model.addPdfAttachment(file.name, link, projectId);
     });
 }
 
-module.exports.getBAsNotInProject = function(req, res){
-	if (!req.session.baid) {
-		res.render('errors/404');
-	}
-	else {
-		model.getProjectOwner(req.get('projectId'), function(result){
-			model.getBAsNotInProject(req.get('projectId'), result.businessAnalystId,function(bas){
+module.exports.getBAsNotInProject = function (req, res) {
+    if (!req.session.baid) {
+        res.render('errors/404');
+    }
+    else {
+        model.getProjectOwner(req.get('projectId'), function (result) {
+            model.getBAsNotInProject(req.get('projectId'), result.businessAnalystId, function (bas) {
                 var emails = "";
-				for (var i = 0; i < bas.length; ++i) {
-					if (bas[i].businessAnalystId !== req.session.baid) {
-						emails += bas[i].email;
-						if (i < bas.length - 1)
-							emails += ",";
-					}
-				}
-				res.send(emails);
+                for (var i = 0; i < bas.length; ++i) {
+                    if (bas[i].businessAnalystId !== req.session.baid) {
+                        emails += bas[i].email;
+                        if (i < bas.length - 1)
+                            emails += ",";
+                    }
+                }
+                res.send(emails);
             })
         })
     }
 }
 
-module.exports.leaveProject = function(req, res){
+module.exports.leaveProject = function (req, res) {
     console.log(req.query.pid);
-    if(req.session.baid){
+    if (req.session.baid) {
         model.leaveProject(req, req.query.pid);
         res.redirect('/ba');
     }
-    else if(req.session.cid){
+    else if (req.session.cid) {
         model.leaveProject(req, req.query.pid);
         res.redirect('/client');
     }
-    else{
+    else {
         //login
         console("u must login");
     }
 }
 
-module.exports.removeBa = function(req, res){
+module.exports.removeBa = function (req, res) {
     model.removeBaFromProject(req.get('pid'), req.get('baid'));
-    res.redirect('/project?pid='+req.get('pid'))
+    res.redirect('/project?pid=' + req.get('pid'))
     //console.log(req.get('pid'), req.get('baid'));
 }
 
-module.exports.removeClient = function(req, res){
+module.exports.removeClient = function (req, res) {
     model.removeClientFromProject(req.get('pid'), req.get('cid'));
-    res.redirect('/project?pid='+req.get('pid'))
+    res.redirect('/project?pid=' + req.get('pid'))
     //console.log(req.get('pid'), req.get('baid'));
 }
 
-module.exports.deleteProject = function(req, res){
+module.exports.deleteProject = function (req, res) {
     //console.log(req.query.pid);
     model.deleteProject(req.query.pid);
     res.redirect('/ba');

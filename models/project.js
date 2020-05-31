@@ -77,13 +77,15 @@ module.exports.getProjectBa = function (id, callback) {
 /*******************************
 * 	create project
 *******************************/
-module.exports.createProject = function (baId, name) {
+module.exports.createProject = function (baId, name, callback) {
 	let sql = "insert into project (name, approval, businessAnalystId) values (?, 0, ?)"
 	let inserts = [name, baId]
 	sql = con.format(sql, inserts)
 	con.query(sql, function (error, results) {
-		if (error) throw error;
+		if (error) callback(-1);
 		// console.log(results);
+		else
+			callback(1);
 	});
 
 };
