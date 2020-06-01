@@ -12,6 +12,7 @@ const path = require('path');
 module.exports.projectHome = async function (req, res) {
 
     if (req.session.baid || req.session.cid) {
+        
         var baParticipants = await model.getProjectBa(req.query.pid);
         // console.log(baParticipants);
         var clientsParticipants = await model.getProjectClients(req.query.pid);
