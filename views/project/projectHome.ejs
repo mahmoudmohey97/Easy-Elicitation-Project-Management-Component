@@ -2,7 +2,6 @@
     <h1>Project's diagrams</h1>
     <%
         var privelages;
-        console.log(userId);
         owner.id == userId ? privelages=true : privelages=false ;
         if(auth){
     %>
@@ -24,7 +23,7 @@
     </div>
 
     <% }
-        console.log(privelages);
+        // console.log(privelages);
         if(diagrams.length == 0){
     %>
             <div> No Created diagrams yet </div>

@@ -1,12 +1,12 @@
 const Cryptr = require('cryptr');
 const cryptr = new Cryptr('mailKey');
 
-module.exports.encrypt = function(name, callback){
+module.exports.encrypt = function (name) {
     const encrypted = cryptr.encrypt(name);
-    callback(encrypted);
+    return encrypted;
 };
 
-module.exports.decrypt = function(encryptedString, callback){
+module.exports.decrypt = function (encryptedString) {
     const decryptedString = cryptr.decrypt(encryptedString);
-    callback(decryptedString)
+    return decryptedString;
 }

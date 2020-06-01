@@ -1,33 +1,31 @@
 const model = require('../models/diagram');
 
-module.exports.deleteDiagram = function(req, res){
-    model.deleteDiagram(req.query.did);
+module.exports.deleteDiagram = async function (req, res) {
+    await model.deleteDiagram(req.query.did);
     res.redirect(req.get('referer'));
 }
 
-module.exports.addDiagramRelation = function(req, res){
+module.exports.addDiagramRelation = async function (req, res) {
     diagram1Id = req.get('diagram1Id');
-    diagram2Id = req.get('diagram2Id'); 
+    diagram2Id = req.get('diagram2Id');
     realtionName = req.get('relationName');
     projectId = req.get('pid');
-    model.addDiagramRelation(diagram1Id, diagram2Id, realtionName, projectId);
+    await model.addDiagramRelation(diagram1Id, diagram2Id, realtionName, projectId);
 }
 
-module.exports.projectRelations = function(req, res){
-    model.getProjectRelations(req.query.pid, function(results){
-        res.send(results)
-  })
+module.exports.projectRelations = async function (req, res) {
+    var results = await model.getProjectRelations(req.query.pid);
+    res.send(results)
 }
 
-module.exports.deleteDiagramRelation = function(req, res){
-    model.deleteDiagramRelation(req.query.id, function(results){
-        res.send("deleted")
-  })
+module.exports.deleteDiagramRelation = async function (req, res) {
+    await model.deleteDiagramRelation(req.query.id);
+    res.send("deleted")
 }
 
-module.exports.createDiagram = function (req, res) {
+module.exports.createDiagram = async function (req, res) {
     var name = req.get('name');
     var description = req.get('description');
     var projectId = req.get('pid');
-    model.addDiagram(name, description, projectId);
+    await model.addDiagram(name, description, projectId);
 }

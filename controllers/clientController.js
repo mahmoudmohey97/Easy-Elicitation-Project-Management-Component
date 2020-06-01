@@ -1,14 +1,13 @@
 var projecModel = require("../models/project");
 
-module.exports.home = function (req, res) {
-    req.session.cid = 1;
+module.exports.home = async function (req, res) {
+    req.session.cid = 3;
     if (!req.session.cid) {
         res.render('errors/404');
     }
     else {
-        projecModel.getClientProjects(req, function (results) {
-            res.render('client/home', { data: results });
-        });
+        var results = await projecModel.getClientProjects(req);
+        res.render('client/home', { data: results });
     }
 };
 
