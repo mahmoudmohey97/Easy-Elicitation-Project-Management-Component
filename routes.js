@@ -30,5 +30,6 @@ router.get('/deleteDiagram', diagramController.deleteDiagram);
 router.post("/createDiagramRelation", diagramController.addDiagramRelation);
 router.get("/getProjectRelations", diagramController.projectRelations); // for diagram relations
 router.get("/deleteRelation", diagramController.deleteDiagramRelation);
+router.get("/",  businessAnalystController.home);
 //router.get('/baInvitation', projectController.handlebaInvitationLink)
 module.exports = router;
