@@ -91,6 +91,23 @@ module.exports.getProjectByBaAndName = async function (baId, name) {
 	return output;
 };
 
+
+module.exports.countParticipants = async function (projectId) {
+	let sql = "select * from (select count(businessAnalystId) as businessAnalysts \
+	from businessanalystparticipant \
+	WHERE businessanalystparticipant.projectId = ?) as a,\
+	(select count(clientId) as clients from clientparticipant WHERE clientparticipant.projectId = ? ) as b";
+	let inserts = [projectId, projectId];
+	sql = con.format(sql, inserts)
+	const output = await query(sql);
+	if(output.length === 1)
+	{
+		output[0].businessAnalysts += 1;
+		return output[0];
+	}
+	return null;
+};
+
 module.exports.getProjectById = async function (projectId) {
 	let sql = "SELECT * FROM project WHERE projectId = ?"
 	let inserts = [projectId]
@@ -100,6 +117,7 @@ module.exports.getProjectById = async function (projectId) {
 		return output[0];
 	return null;
 };
+
 
 module.exports.clientInvitation = async function (clientId, projectId) {
 	let sql = "INSERT INTO clientparticipant (clientId, projectId) values (?, ?)";

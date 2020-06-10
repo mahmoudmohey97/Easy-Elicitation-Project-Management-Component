@@ -15,8 +15,12 @@ router.post('/createDiagram', diagramController.createDiagram);
 router.get('/ba', businessAnalystController.home);
 router.post('/ba', businessAnalystController.home);
 router.get('/client', clientController.home);
+
+// sending Email
 router.get('/sendEmail', projectController.inviteClient);
 router.post('/sendEmailToBA', projectController.inviteBA);
+
+// Invitation
 router.get('/clientInvitation', projectController.handleClientInvitationLink);
 router.get('/baInvitation', projectController.handleBAInvitationLink);
 router.get('/getBasInCompany', businessAnalystController.getBAsInMyCompany);
@@ -28,8 +32,8 @@ router.get('/leaveProject', projectController.leaveProject);
 router.get('/deleteProject', projectController.deleteProject);
 router.get('/deleteDiagram', diagramController.deleteDiagram);
 router.post("/createDiagramRelation", diagramController.addDiagramRelation);
-router.get("/getProjectRelations", diagramController.projectRelations); // for diagram relations
+// router.get("/getProjectRelations", diagramController.projectRelations); // for diagram relations
 router.get("/deleteRelation", diagramController.deleteDiagramRelation);
 router.get("/",  businessAnalystController.home);
-//router.get('/baInvitation', projectController.handlebaInvitationLink)
+router.post('/deleteRelation', diagramController.deleteRelation)
 module.exports = router;

@@ -17,6 +17,13 @@ module.exports.addDiagramRelation = async function (diagram1Id, diagram2Id, real
 	const output = await query(sql);
 	return output;
 }
+module.exports.deleteDiagramRelation = async function (id) {
+	sql = "delete from diagramrelation where relationId = ?";
+	inserts = [id];
+	sql = con.format(sql, inserts);
+	const output = await query(sql);
+	return output;
+}
 
 module.exports.getProjectRelations = async function (projectId) {
 	sql = "SELECT dir.relationId, A.NAME AS diagram1Name, B.NAME AS diagram2Name, dir.type AS type\
