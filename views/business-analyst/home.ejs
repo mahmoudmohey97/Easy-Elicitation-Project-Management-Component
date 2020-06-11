@@ -138,35 +138,35 @@
                                     </div>
                                     
                                     
-<form id="regForm" action="/ba" method="POST">
-    <h1 id="modal-header">Project</h1>
-    <!-- One "tab" for each step in the form: -->
-    <div class="tab">
-      <p><input class="fullInput" placeholder="Project Name..." id="projectName" name="name"></p>
-    </div>
-    <div class="tab">
-        <p><input class='fullInput' placeholder="Client E-mail..." id="clientEmail" name="email"></p>
-        <button style="float: left" type="button" onclick="inviteClient()"> Invite </button>
-    </div>
-    <div class="tab">
-        <div id="ba-list">
+                                    <form id="regForm" action="/ba" method="POST">
+                                        <h1 id="modal-header">Project</h1>
+                                        <!-- One "tab" for each step in the form: -->
+                                        <div class="tab">
+                                        <p><input class="fullInput" placeholder="Project Name..." id="projectName" name="name"></p>
+                                        </div>
+                                        <div class="tab">
+                                            <p><input class='fullInput' placeholder="Client E-mail..." id="clientEmail" name="email"></p>
+                                            <button style="float: left" type="button" onclick="inviteClient()"> Invite </button>
+                                        </div>
+                                        <div class="tab">
+                                            <div id="ba-list">
 
-        </div>
-    </div>
-    <div style="overflow:auto;">
-      <div style="float:right;">
-        <button class="btn-primary" type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
-      </div>
-    </div>
-    <!-- Circles which indicates the steps of the form: -->
-    <div style="text-align:center;margin-top:40px;">
-      <span class="step"></span>
-      <span class="step"></span>
-      <span class="step"></span>
-    </div>
-  </form>
+                                            </div>
+                                        </div>
+                                        <div style="overflow:auto;">
+                                        <div style="float:right;">
+                                            <button class="btn-primary" type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                                        </div>
+                                        </div>
+                                        <!-- Circles which indicates the steps of the form: -->
+                                        <div style="text-align:center;margin-top:40px;">
+                                        <span class="step"></span>
+                                        <span class="step"></span>
+                                        <span class="step"></span>
+                                        </div>
+                                    </form>
                                 </div>
-                                </div>
+                            </div>
                             </div>      
                         </div>
                     </div>
@@ -203,11 +203,11 @@
                                         <div class="m-t-30">
                                             <div class="row text-center">
                                                 <div class="col-6 border-right">
-                                                    <h4 class="m-b-0">4</h4>
+                                                    <h4 class="m-b-0"> <%= myProjects[i].counts.businessAnalysts%> </h4>
                                                     <span class="font-14 text-muted">BA</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <h4 class="m-b-0">5</h4>
+                                                    <h4 class="m-b-0"><%= myProjects[i].counts.clients %></h4>
                                                     <span class="font-14 text-muted">CLIENT</span>
                                                 </div>
                                             </div>
@@ -246,11 +246,11 @@
                                         <div class="m-t-30">
                                             <div class="row text-center">
                                                 <div class="col-6 border-right">
-                                                    <h4 class="m-b-0">4</h4>
+                                                    <h4 class="m-b-0"><%= projects[i].counts.businessAnalysts %> </h4>
                                                     <span class="font-14 text-muted">BA</span>
                                                 </div>
                                                 <div class="col-6">
-                                                    <h4 class="m-b-0">5</h4>
+                                                    <h4 class="m-b-0"><%= projects[i].counts.clients %></h4>
                                                     <span class="font-14 text-muted">CLIENT</span>
                                                 </div>
                                             </div>

@@ -13,17 +13,21 @@ module.exports.projectHome = async function (req, res) {
 
     if (req.session.baid || req.session.cid) {
         
+        var project = await model.getProjectById(req.query.pid);
         var baParticipants = await model.getProjectBa(req.query.pid);
         // console.log(baParticipants);
         var clientsParticipants = await model.getProjectClients(req.query.pid);
         var projectDiagrams = await diagramModel.showProjectDiagrams(req);
+        var diagramsRelations = await diagramModel.getProjectRelations(req.query.pid);
         req.query = { pid: req.query.pid }
         var owner = await model.getProjectOwner(req.query.pid);
         var attachements = await model.getAllAttachments(req.query.pid);
         var ba = (!req.session.baid) ? false : true;
         var userId = (!req.session.baid) ? req.session.cid : req.session.baid;
         res.render('project/projectHome', {
+            projectName: project.name,
             auth: ba, diagrams: projectDiagrams, businessAnalysts: baParticipants,
+            diagramsRelations: diagramsRelations,
             clients: clientsParticipants, userId: userId,
             owner: { email: owner.email, name: owner.name, id: owner.businessAnalystId },
             attachements: attachements, projectId: req.query.pid
@@ -41,6 +45,7 @@ module.exports.inviteClient = async function (req, res) {
         mail = encryptedMail;
         var link = "http://localhost:3000/clientInvitation?pid=" + result[0].projectId + "&dt=" + parseInt(Date.now() / 1000) + "&to=" + mail;
         sendMailModel.invite(req.query.mail, req.query.name, link);
+        res.send(200)
     }
     else {
         var project = await model.getProjectById(req.query.pid);
@@ -48,6 +53,7 @@ module.exports.inviteClient = async function (req, res) {
         mail = encryptedMail;
         var link = "http://localhost:3000/clientInvitation?pid=" + req.query.pid + "&dt=" + parseInt(Date.now() / 1000) + "&to=" + mail;
         sendMailModel.invite(req.query.mail, project.name, link);
+        res.send(200)
     }
 }
 
@@ -128,7 +134,6 @@ module.exports.handleBAInvitationLink = async function (req, res) {
         else {
             console.log('u are not authorized :) ');
         }
-
     }
     else {
         // el awl Login
